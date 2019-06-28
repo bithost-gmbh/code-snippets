@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1
+
+/usr/libexec/s2i/assemble

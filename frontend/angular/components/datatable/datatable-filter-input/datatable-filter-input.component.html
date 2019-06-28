@@ -1,0 +1,42 @@
+<ng-container *ngIf="columnConfig">
+
+    <mat-form-field *ngIf="columnConfig.type === 'string'" class="rbtool-datatable-input-form-field-filter">
+      <input #filterInput
+             matInput
+             [(ngModel)]="filterValue"
+             [placeholder]="columnConfig.labelKey | translate">
+    </mat-form-field>
+
+    <mat-form-field *ngIf="columnConfig.type === 'date' || columnConfig.type === 'date-time'" class="rbtool-datatable-input-form-field-filter">
+      <input #filterInput
+             matInput
+             [(ngModel)]="filterValue"
+             [matDatepicker]="picker"
+             [placeholder]="columnConfig.labelKey | translate">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="columnConfig.type === 'enum'" class="rbtool-datatable-input-form-field-filter">
+      <mat-select
+        [placeholder]="columnConfig.labelKey | translate"
+        [(ngModel)]="filterValue">
+        <mat-option>{{'features.administration.components.datatable.alle' | translate}}</mat-option>
+        <mat-option *ngFor="let enumValue of columnConfig.enumValues" [value]="enumValue.value">
+          <span *ngIf="enumValue.labelKey; else optionLabel">{{enumValue.labelKey | translate}}</span>
+          <ng-template #optionLabel>{{enumValue.label}}</ng-template>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="columnConfig.type === 'boolean'" class="rbtool-datatable-input-form-field-filter">
+      <mat-select
+        [placeholder]="columnConfig.labelKey | translate"
+        [(ngModel)]="filterValue">
+        <mat-option>{{'features.administration.components.datatable.alle' | translate}}</mat-option>
+        <mat-option [value]="true">{{'features.administration.components.datatable.boolean.yes' | translate}}</mat-option>
+        <mat-option [value]="false">{{'features.administration.components.datatable.boolean.no' | translate}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+</ng-container>

@@ -1,0 +1,19 @@
+{
+  "name": "pdfexport",
+  "version": "2.0.2",
+  "description": "Provides a Service for Converting SVG to PDF with Chrome Headless",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "compression": "^1.7.4",
+    "content-disposition": "^0.5.3",
+    "express": "^4.16.4",
+    "morgan": "^1.9.1",
+    "optimist": "^0.6.1",
+    "puppeteer": "^1.11.0",
+    "tmp": "0.0.33"
+  }
+}

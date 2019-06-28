@@ -1,0 +1,62 @@
+
+
+table {
+  width: 100%;
+}
+
+td, th {
+  vertical-align : middle;
+}
+
+
+// matTable assigns classes based on the column names, classes are only available during runtime
+.mat-column-ACTION_action {
+  width: 120px;
+}
+
+.mat-row:hover {
+  background-color: blue;
+}
+
+.rbtool-datatable-empty-container {
+  text-align: center;
+  min-height: 48px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rbtool-datatable-filter-wrap {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.rbtool-datatable-refresh-button {
+  width: auto;
+  margin-bottom: 15px;
+}
+.rbtool-datatable-create-button {
+  width: auto;
+  margin-bottom: 15px;
+  margin-right: 10px;
+}
+
+::ng-deep .rbtool-datatable-tooltip {
+  font-size: 14px;
+}
+
+.rbtool-datatable-textarea {
+  white-space: pre-line;
+}
+
+.rbtool-datable-elevation-helper {
+  overflow-x: auto;
+}
+
+.mat-cell {
+  padding: 8px 8px 8px 0;
+}
+
+.rbtool-datatable-last-refresh {
+  margin-left: 10px;
+}

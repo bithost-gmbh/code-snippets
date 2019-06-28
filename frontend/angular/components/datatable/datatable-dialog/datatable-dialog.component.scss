@@ -1,0 +1,55 @@
+.rbtool-datatable-dialog-button {
+  min-width: 150px;
+  text-align: center;
+  width: auto;
+}
+
+.mat-dialog-content {
+  min-width: 600px;
+  min-height: 300px;
+}
+
+.rbtool-datatable-dialog-form-field {
+  display: block;
+}
+
+.datatable-dialog-form-group {
+  width: 100%
+}
+
+.dialog-input-textarea {
+  resize: none;
+  overflow: hidden;
+}
+input[type="time"] {
+  height: 19px;
+}
+
+.rbtool-datatable-dialog-file-input {
+  display: none;
+}
+
+.rbtool-datatable-dialog-file-text {
+  vertical-align: middle;
+  display: inline;
+}
+
+.rbtool-datatable-dialog-file-container {
+  margin-top: 10px;
+}
+
+// remove stepper/spinner for numeric inputs
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.icon::before {
+  font-size: 25px;
+}
+
+.rbtool-datatable-dialog-file-label,
+.rbtool-datatable-dialog-file-button {
+  vertical-align: middle;
+}

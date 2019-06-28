@@ -1,0 +1,161 @@
+<div class="text__base">
+
+  <p>
+    With <a href="https://github.com/openapitools/openapi-generator" target="_blank">OpenAPI Generator</a>
+    you can generate Client and Server code
+    of your API defined in an <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md" target="_blank">OpenAPI 2.0</a>
+    or <a href="https://swagger.io/specification/" target="_blank">OpenAPI 3.0</a> yaml file.
+  </p>
+  <p>Note: OpenAPI Generator is a community fork of <a href="https://github.com/swagger-api/swagger-codegen" target="_blank">Swagger Codegen</a>. <br />
+    The instructions below are also valid for Swagger Codegen 2.3.1 and 2.4.0 using <a href="https://mvnrepository.com/artifact/io.swagger/swagger-codegen-maven-plugin">swagger-codegen-maven-plugin</a></p>
+
+  <h2>Example</h2>
+  <div fxLayout fxLayoutGap="10px">
+    <div fxFlex="50">
+      <h3>API Definition</h3>
+      <p>API defined in <code class="language-markup">api-definition.yml</code></p>
+      <lsg-ext-code-block language="yaml">{{docExampleYaml}}</lsg-ext-code-block>
+    </div>
+    <div fxFlex="50">
+      <h3>Generated Code</h3>
+      <p>Frontend</p>
+      <lsg-ext-code-block language="typescript">{{docExampleGeneratedCodeFrontend}}</lsg-ext-code-block>
+
+      <p>Backend</p>
+      <lsg-ext-code-block language="java">{{docExampleGeneratedCodeBackend}}</lsg-ext-code-block>
+    </div>
+  </div>
+
+  <h2>API First / Code Generation</h2>
+  <p>The API Development process proposed here allows following the
+    <a href="http://zalando.github.io/restful-api-guidelines/" target="_blank">API First / Zalando RESTful API Guidelines</a> principle and looks as follows:</p>
+
+
+  <ul>
+    <li>Define and document the API in an <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md" target="_blank">OpenAPI 2.0 Yaml File</a> file.</li>
+    <li>View / try out the API with <a href="http://editor.swagger.io/">Swagger Editor</a></li>
+    <li>Generate the Backend Server REST-Controller interfaces and data models (e.g. for Spring Boot) with <a href="https://swagger.io/swagger-codegen/" target="_blank">Swagger Codegen</a></li>
+    <li>Generate the Frontend Client Services and data models (e.g. for Angular) with <a href="https://swagger.io/swagger-codegen/" target="_blank">Swagger Codegen</a> to access the API.</li>
+    <li>Implement the Backend-API REST-Controller functionality.</li>
+    <li>Access the API using the Frontend Client Services</li>
+  </ul>
+
+  <p>Here, we explain the setup using the following technologies:</p>
+
+  <ul>
+    <li>Backend: Java Spring Boot</li>
+    <li>Frontend: Angular</li>
+    <li>OpenAPI Generator 3.0.0</li>
+  </ul>
+
+  <h3>Installation</h3>
+  <p>In order to use the helper scripts for swagger codegen provided by lsg-ext,
+    you need install lsg-ext in your Backend Java Project, as we demonstrate the use together with the <a href="https://mvnrepository.com/artifact/org.openapitools/openapi-generator-maven-plugin">openapi-generator-maven-plugin</a></p>
+  <p>In your Spring Boot project folder, install lsg-ext:</p>
+  <lsg-ext-code-block language="yaml">npm init
+npm install lsg-ext</lsg-ext-code-block>
+  <p>For your convenience, add the following scripts to the <code class="language-markup">package.json</code>:</p>
+  <lsg-ext-code-block language="json">{{docExamplePackageJson}}</lsg-ext-code-block>
+
+  <p>
+    Note: Per default the bundled API definition will be placed in a <code class="language-markup">dist</code> folder right next to your <code class="language-markup">src</code> folder.
+    If you want to change this, use the <code class="language-markup">-d</code> parameter to set the location of the <code class="language-markup">dist</code> folder when bundling the API definition.
+
+    The <code class="language-markup">api-bundle</code> script from above would look like this if we wanted the API bundle to be placed in the <code class="language-markup">admin</code> folder:
+    <lsg-ext-code-block language="json">{{docExampleBundleScriptWithDistFolder}}</lsg-ext-code-block>
+  </p>
+
+  <h3>Defining and documenting the API</h3>
+  <p>Define your API in
+    <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md" target="_blank">OpenAPI 2.0 Yaml File</a>,
+    e.g. <code class="language-markup">api-definition.yml</code></p>
+  <p>For your convencience, install the <a href="https://github.com/zalando/intellij-swagger" target="_blank">Swagger Plugin</a> in IntelliJ. It helps you editing the OpenAPI yaml file.</p>
+  <p>The <a href="http://zalando.github.io/restful-api-guidelines/" target="_blank">Zalando RESTful API Guidelines</a>
+    are a good resource for creating good APIs.</p>
+  <p>With the API First principle, you define and document your API in a first step,
+    independent of the implementation.</p>
+  <p>You can start with the following content:</p>
+  <lsg-ext-code-block language="yaml">{{docExampleYamlInfo}}</lsg-ext-code-block>
+  <p>In order to move some
+    the content of your <code class="language-markup">api-definition.yml</code> to separate files
+    in order to avoid having one huge file,
+    you can use the <code class="language-markup">$ref: './models/Bank.yml'</code> property,
+    which simply inserts the content of the path referenced.
+  </p>
+
+  <div fxLayout fxLayoutGap="10px">
+    <div fxFlex="50">
+      <p><code class="language-markup">api-definition.yml</code></p>
+      <lsg-ext-code-block language="yaml">{{docExampleReference}}</lsg-ext-code-block>
+    </div>
+    <div fxFlex="50">
+      <p><code class="language-markup">models/Bank.yml</code></p>
+      <lsg-ext-code-block language="yaml">{{docExampleBankModel}}</lsg-ext-code-block>
+    </div>
+  </div>
+
+  <p>In order to be able to copy the <code class="language-markup">api-definition.yml</code>
+    into e.g. <a href="http://editor.swagger.io/">Swagger Editor</a>,
+    you can use the <code class="language-markup">bundle</code> script of <code class="language-markup">lsg-ext</code> as follows</p>
+  <lsg-ext-code-block language="yaml">node node_modules/lsg-ext/utils/swagger/run.js bundle -f src/main/resources/api/src/api-definition.yml</lsg-ext-code-block>
+  <p>As a shortcut, you can simply run
+    <lsg-ext-code-block>npm run api-bundle</lsg-ext-code-block>
+    if you have set up the <code class="language-markup">package.json</code> as described above.</p>
+  <p>This will generate a bundled file in <code class="language-markup">src/main/resources/api/dist/api-definition.bundle.yml</code></p>
+  <p>Note: the <code class="language-markup">$ref</code> references in the <code class="language-markup">.yml</code>
+    files need to be relative to the <code class="language-markup">api-definition.yml</code>, starting with <code class="language-markup">./</code></p>
+
+  <h4>API Versions / Large Definitions</h4>
+  <p>Hint: if you want to maintain multiple API versions, simply use sub-folders for the versions. e.g. <code class="language-markup">src/main/resources/api/v1/dist/api-definition.bundle.yml</code>
+    and adapt the paths in the <code class="language-markup">package.json</code> and <code class="language-markup">pom.xml</code> accordingly.
+  </p>
+  <p>Moreover, instead of having one huge API definition, you can also split it up into multiple different API definition files and put them in subfolders.
+    In the <code class="language-markup">pom.xml</code>, you can adapt the path / package of the generated files to sub-packages.</p>
+
+
+  <h3>Viewing / trying out the API</h3>
+  <p>In order to view your API definition in a swagger editor,
+    you can either paste the content of <code class="language-markup">api-definition.bundle.yml</code> into <a href="http://editor.swagger.io/">Swagger Editor</a>
+    or you can run <lsg-ext-code-block>npm run api-server</lsg-ext-code-block> or
+    <lsg-ext-code-block>node node_modules/lsg-ext/utils/swagger/run.js server -f src/main/resources/api/src/api-definition.yml</lsg-ext-code-block>
+  </p>
+  <p><b>Important!</b>
+    Open <a href="http://localhost:5200" target="_blank">http://localhost:5200</a>
+    in Google Chrome, as Internet Explorer will cache the .yml file and API Responses, even though it should not!</p>
+
+  <p>In order to view an updated version of your
+    <code class="language-markup">api-definition.bundle.yml</code>, run
+    <lsg-ext-code-block>npm run api-bundle</lsg-ext-code-block> and refresh the page.</p>
+  <p>In order to automatically re-generate the bundle as soon as you change your .yml file, run</p>
+  <lsg-ext-code-block>npm run api-bundle-watch</lsg-ext-code-block>
+  <p>and refresh the page to see the changes.</p>
+
+  <h3>Generating Backend Server / Frontend Clients</h3>
+  <p>In order to generate the backend server / frontend client code, we use the
+    <a href="https://mvnrepository.com/artifact/org.openapitools/openapi-generator-maven-plugin">openapi-generator-maven-plugin</a></p>
+  <p>Set up the following configuration in your <code class="language-markup">pom.xml</code> in order to generate the code with maven:</p>
+  <lsg-ext-code-block language="xml">{{docExamplePom}}</lsg-ext-code-block>
+
+  <p>Finally, run the following command:</p>
+  <lsg-ext-code-block>npm run api-generate</lsg-ext-code-block>
+
+  <h3>Implementing the Backend-API</h3>
+  <p>In order to implement the backend API, simply create classes that implement the generated interfaces. <br/>
+  <b>Note:</b> It is important to copy the method signature including the annotations, otherwise path-parameters will not work correctly.
+    Also, add the <code class="language-markup">@Override</code> annotation to prevent not-overriding the interface if the signature changes. Example:</p>
+  <lsg-ext-code-block language="java">{{docExampleRestController}}</lsg-ext-code-block>
+
+  <h3>Accessing the API in the Frontend</h3>
+  <p>In the angular frontend, simply import the <code class="language-markup">ApiModule</code> and specify the api base path by providing the <code class="language-markup">Configuration</code> as follows:</p>
+  <lsg-ext-code-block language="typescript">{{docExampleImportModule}}</lsg-ext-code-block>
+  <p>Finally, inject the generated service and use it in your component:</p>
+  <lsg-ext-code-block>{{docExampleFrontendService}}</lsg-ext-code-block>
+
+  <h3>Extras</h3>
+
+  <h4>Enum Parameters</h4>
+  <p>Sometimes it can be useful to constrain the allowed values of a parameter, e.g.</p>
+  <lsg-ext-code-block language="yaml">{{docExampleEnumParameter}}</lsg-ext-code-block>
+
+
+</div>

@@ -1,0 +1,83 @@
+<div class="text__base">
+
+  <p>
+    Service for initializing, extending and getting typed configuration. <br />
+    It will allow you to define your configuration in a .ts file, extend it with environment-specific values,
+    and access the config values (including type-hinting and type-checking at compile-time) like this:
+  </p>
+  <lsg-ext-code-block language="typescript">this.configService.getConfiguration().cheese.apiUrl</lsg-ext-code-block>
+
+  <h2 class="teaser__heading">How to use it</h2>
+  <p>
+    Define your configuration interface and let the <code class="language-markup" >ConfigService</code>
+    know about it by creating <code class="language-markup" >config/configuration.interface.ts</code> with the following content:
+  </p>
+  <lsg-ext-code-block language="typescript">{{docConfigurationInterface}}</lsg-ext-code-block>
+  <p>
+    Define your default configuration (dev environment) in a file <code class="language-markup" >config/config.ts</code> with the following content:
+  </p>
+  <lsg-ext-code-block language="typescript">{{docConfig}}</lsg-ext-code-block>
+  <p>
+    Override the configuration with environment-specific settings by creating a file <code class="language-markup" >config/config-prod.ts</code> with the following content:
+  </p>
+  <lsg-ext-code-block language="typescript">{{docConfigProd}}</lsg-ext-code-block>
+  <p>
+    Note: in the override configuration you can specify any key defined in <code class="language-markup" >config/configuration.interface.ts</code>,
+    which will override the the value of the default configuration in <code class="language-markup" >config/config.ts</code>. <br />
+    All keys in the override configuration are optional, in order to avoid maintaining redunant copies of configuration settings for multiple environments.
+  </p>
+
+  <p>
+    In your <code class="language-markup" >main.ts</code>, add the following to initialize the configuration:
+  </p>
+  <lsg-ext-code-block language="typescript">{{docMain}}</lsg-ext-code-block>
+
+  <p>You are now ready to use your configuration in e.g. a component:</p>
+
+  <lsg-ext-code-block language="typescript">{{docExample}}</lsg-ext-code-block>
+
+  <p>
+    Note: When upgrading from <code class="language-markup" >lsg-ext</code>
+    lower than <code class="language-markup" >4.1.0</code>
+    it is necessary to change the path to the <code class="language-markup" >configuration.interface.ts</code> of
+    lsg-ext in your <code class="language-markup" >config/configuration.interface.ts</code><br />
+    from <br />
+    <code class="language-markup" >{{doc_4_1_0_importOld}}</code> <br />
+    to<br />
+    <code class="language-markup" >{{doc_4_1_0_importNew}}</code>
+  </p>
+
+  <h2>Unit Testing</h2>
+  <p>For unit-testing, a separate environment should be configured.<br />
+    To do so, add a new environment <code class="language-markup">unit-test</code> in your <code class="language-markup">.angular-cli.json</code>:
+  </p>
+  <lsg-ext-code-block language="json">{{docEnvironmentsUnitTesting}}</lsg-ext-code-block>
+  <p>Apply the configuration in in your <code class="language-markup">test.ts</code> as follows</p>
+  <lsg-ext-code-block language="typescript">{{docTestTs}}</lsg-ext-code-block>
+
+
+  <h2>API</h2>
+
+  <h3>ConfigService</h3>
+  <ul>
+    <li>
+      <code class="language-typescript">
+        {{docMethodsInitializeConfiguration}}
+      </code> <br/>
+      Initializes the application configuration.
+    </li>
+    <li>
+      <code class="language-typescript">
+        {{docMethodsExtendConfiguration}}
+      </code> <br/>
+      Extends the application configuration
+    </li>
+    <li>
+      <code class="language-typescript">
+        {{docMethodsGetConfiguration}}
+      </code> <br/>
+      Returns the application configuration.
+    </li>
+  </ul>
+
+</div>

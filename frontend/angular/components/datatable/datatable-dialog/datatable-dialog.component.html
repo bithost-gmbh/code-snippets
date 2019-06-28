@@ -1,0 +1,180 @@
+<ng-container *ngIf="dialogConfig">
+  <div class="rbtool-datatable-dialog-container">
+    <div class="text__base">
+      <h2>{{_getDialogTitleLabel()}}</h2>
+    </div>
+
+    <form *ngIf="formGroup" [formGroup]="formGroup" class="datatable-dialog-form-group" (submit)="_save()">
+      <mat-dialog-content>
+        <div formGroupName="model" [@wobbleAnimation]="_wobbleTrigger">
+          <ng-container *ngFor="let column of _getAvailableColumns()">
+
+              <!-- Type: percent -->
+            <mat-form-field *ngIf="column.type === 'percent'" class="rbtool-datatable-dialog-form-field">
+              <input matInput
+                     type="number"
+                     [formControlName]="column.name"
+                     [placeholder]="column.labelKey | translate"
+                     [readonly]="_isColumnReadOnly(column)"
+                     [required]="_isColumnRequired(column)">
+              <span matSuffix>%</span>
+
+              <mat-error *ngIf="_hasColumnFormControlError(column, 'required')">
+                {{'features.administration.components.datatableDialog.errorMessages.requiredField' | translate }}
+              </mat-error>
+              <mat-error *ngIf="_hasColumnFormControlError(column, 'vrLimite')">
+                {{'features.administration.components.datatableDialog.errorMessages.vrLimite' | translate }}
+              </mat-error>
+            </mat-form-field>
+
+              <!-- Type: string -->
+              <mat-form-field *ngIf="column.type === 'string'" class="rbtool-datatable-dialog-form-field">
+                <input matInput
+                       [formControlName]="column.name"
+                       [placeholder]="column.labelKey | translate"
+                       [readonly]="_isColumnReadOnly(column)"
+                       [required]="_isColumnRequired(column)">
+
+                <mat-error *ngIf="_hasColumnFormControlError(column, 'required')">
+                  {{'features.administration.components.datatableDialog.errorMessages.requiredField' | translate }}
+                </mat-error>
+              </mat-form-field>
+
+              <!-- Type: textarea -->
+              <mat-form-field *ngIf="column.type === 'textarea'" class="rbtool-datatable-dialog-form-field">
+                <textarea matInput
+                          [formControlName]="column.name"
+                          [placeholder]="column.labelKey | translate"
+                          [cdkTextareaAutosize]="true"
+                          [cdkAutosizeMaxRows]="6"
+                          [spellcheck]="false"
+                          [readonly]="_isColumnReadOnly(column)"
+                          [required]="_isColumnRequired(column)"
+                          class="dialog-input-textarea">
+                </textarea>
+
+                <mat-error *ngIf="_hasColumnFormControlError(column, 'required')">
+                  {{'features.administration.components.datatableDialog.errorMessages.requiredField' | translate }}
+                </mat-error>
+              </mat-form-field>
+
+              <!-- Type: boolean -->
+              <div *ngIf="column.type === 'boolean'" class="rbtool-datatable-dialog-form-field">
+                <mat-checkbox [formControlName]="column.name" [required]="_isColumnRequired(column)">
+                  {{column.labelKey | translate}}
+                </mat-checkbox>
+                <mat-error *ngIf="_hasColumnFormControlError(column, 'required')">
+                  {{'features.administration.components.datatableDialog.errorMessages.requiredField' | translate }}
+                </mat-error>
+              </div>
+
+              <!-- Type: date -->
+              <div fxLayout *ngIf="column.type === 'date' || column.type === 'date-time'">
+                <mat-form-field class="rbtool-datatable-dialog-form-field" fxFlex="grow">
+                  <input matInput
+                         [formControlName]="column.name"
+                         [matDatepicker]="picker"
+                         [placeholder]="column.labelKey | translate"
+                         [readonly]="_isColumnReadOnly(column)"
+                         [required]="_isColumnRequired(column)">
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+
+                  <mat-error *ngIf="_hasColumnFormControlError(column, 'required')">
+                    {{'features.administration.components.datatableDialog.errorMessages.requiredField' | translate }}
+                  </mat-error>
+                  <mat-error *ngIf="_hasColumnFormControlError(column, 'dateInFuture') || _hasColumnFormControlError(column, 'dateTodayOrInFuture')">
+                    {{'features.administration.components.datatableDialog.errorMessages.dateNotInFuture' | translate }}
+                  </mat-error>
+                  <mat-error *ngIf="_hasColumnFormControlError(column, 'dateInPast') || _hasColumnFormControlError(column, 'dateTodayOrInPast')">
+                    {{'features.administration.components.datatableDialog.errorMessages.dateNotInPast' | translate }}
+                  </mat-error>
+                  <mat-error *ngIf="_hasColumnFormControlError(column, 'date')">
+                    {{'features.administration.components.datatableDialog.errorMessages.requiredField' | translate }}
+                  </mat-error>
+                  <mat-error *ngIf="_hasColumnFormControlError(column, 'dateOffset')">
+                    {{'features.administration.components.datatableDialog.errorMessages.dateAdHocAuswertung' | translate }}
+                  </mat-error>
+                  <mat-error *ngIf="_hasColumnFormControlError(column, 'dateNotBefore')">
+                    {{'features.administration.components.datatableDialog.errorMessages.dateNotBefore' | translate }}
+                  </mat-error>
+                  <mat-error *ngIf="_hasColumnFormControlError(column, 'dateNotAfter')">
+                    {{'features.administration.components.datatableDialog.errorMessages.dateNotAfter' | translate }}
+                  </mat-error>
+                </mat-form-field>
+
+                <!-- Time -->
+                <mat-form-field class="rbtool-datatable-dialog-form-field" fxFlex="auto"
+                                *ngIf="column.type === 'date-time'">
+                  <input matInput
+                         type="time"
+                         [formControl]="_getColumnHelperFormControl(column, 'time')"
+                         placeholder="HH:mm"
+                         [readonly]="_isColumnReadOnly(column)"
+                         [required]="_isColumnRequired(column)">
+
+                  <mat-error *ngIf="_hasColumnHelperFormControlError(column, 'time', 'required')">
+                    {{'features.administration.components.datatableDialog.errorMessages.requiredField' | translate }}
+                  </mat-error>
+                  <mat-error *ngIf="_hasColumnHelperFormControlError(column, 'time', 'timeFormat')">
+                    {{'features.administration.components.datatableDialog.errorMessages.timeFormat' | translate }}
+                  </mat-error>
+                </mat-form-field>
+
+              </div>
+
+              <!-- Type: enum -->
+              <mat-form-field *ngIf="column.type === 'enum'" class="rbtool-datatable-dialog-form-field">
+                <mat-select *ngIf="!_isColumnReadOnly(column); else readOnlyEnum"
+                            [formControlName]="column.name"
+                            [placeholder]="column.labelKey | translate"
+                            [required]="_isColumnRequired(column)">
+                  <mat-option *ngFor="let enumValue of column.enumValues" [value]="enumValue.value">
+                    <span *ngIf="enumValue.labelKey; else optionLabel">{{enumValue.labelKey | translate}}</span>
+                    <ng-template #optionLabel>{{enumValue.label}}</ng-template>
+                  </mat-option>
+                </mat-select>
+                <ng-template #readOnlyEnum>
+                  <input matInput
+                         [formControlName]="column.name"
+                         [placeholder]="column.labelKey | translate"
+                         [readonly]="_isColumnReadOnly(column)">
+                </ng-template>
+
+                <mat-error *ngIf="_hasColumnFormControlError(column, 'required')">
+                  {{'features.administration.components.datatableDialog.errorMessages.requiredSelectField' | translate }}
+                </mat-error>
+              </mat-form-field>
+
+              <!-- Type: file -->
+              <div *ngIf="column.type === 'file'" class="rbtool-datatable-dialog-file-container">
+                <input rbtoolDialogFileInput [datatableColumn]="column" type="file" (change)="_onFileAdded(column)" class="rbtool-datatable-dialog-file-input" />
+                <button mat-mini-fab
+                        type="button"
+                        class="rbtool-datatable-dialog-file-button"
+                        (click)="_triggerFileInputSelector(column)"
+                        [disabled]="_isUploading">
+                  <div class="icon icon-clip"></div>
+                </button>
+
+                <span class="rbtool-datatable-dialog-file-label">
+                  {{_uploadedFiles[column.name] ? _uploadedFiles[column.name].name : 'features.administration.components.datatableDialog.fileUpload.emptyText' | translate}}
+                </span>
+              </div>
+
+          </ng-container>
+        </div>
+      </mat-dialog-content>
+
+      <div fxLayout fxLayoutAlign="center" fxLayoutGap="15px">
+        <button mat-flat-button color="primary" type="submit" class="rbtool-datatable-dialog-button">
+          {{ 'features.administration.components.datatableDialog.insert.ok' | translate }}
+        </button>
+        <button mat-stroked-button type="button" (click)="_cancel()" class="rbtool-datatable-dialog-button">
+          {{ 'features.administration.components.datatableDialog.insert.cancel' | translate }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</ng-container>

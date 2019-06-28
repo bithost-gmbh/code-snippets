@@ -1,0 +1,42 @@
+<ng-container *ngIf="dialogConfig">
+  <div class="rbtool-datatable-delete-dialog-container">
+    <div class="text__base">
+      <h2 *ngIf="dialogConfig.config.customDeleteMessageKey; else standardMessage">
+        {{dialogConfig.config.customDeleteMessageKey | translate}}
+      </h2>
+      <ng-template #standardMessage>
+        <h2>{{ 'features.administration.components.datatableDialog.delete.title' | translate }}</h2>
+      </ng-template>
+    </div>
+      <mat-dialog-content>
+        <table class="rbtool-datatable-delete-dialog-table">
+          <tr *ngFor="let column of _deleteColumns; last as last">
+            <td>{{column.key}}</td>
+
+            <!-- Simplified formatting -->
+            <ng-container [ngSwitch]="column.column.type">
+              <td *ngSwitchCase="'string'">{{column.value}}</td>
+              <td *ngSwitchCase="'textarea'">{{column.value}}</td>
+              <td *ngSwitchCase="'date'">{{column.value | formattedDate}}</td>
+              <td *ngSwitchCase="'date-time'">{{column.value | formattedDateTime}}</td>
+              <td *ngSwitchCase="'boolean'">{{('features.administration.components.datatable.boolean.' + (column.value ? 'yes' : 'no')) | translate}}</td>
+              <td *ngSwitchCase="'enum'">
+                <span *ngIf="_findEnumValue(column.column, column.value) as enumValue">
+                  <span *ngIf="enumValue.labelKey; else optionLabel">{{enumValue.labelKey | translate}}</span>
+                  <ng-template #optionLabel>{{enumValue.label}}</ng-template>
+                </span>
+              </td>
+            </ng-container>
+          </tr>
+        </table>
+      </mat-dialog-content>
+      <div fxLayout fxLayoutAlign="center" fxLayoutGap="15px">
+        <button mat-flat-button color="primary" (click)="_ok()" class="rbtool-datatable-dialog-button">
+          {{ 'features.administration.components.datatableDialog.insert.ok' | translate }}
+        </button>
+        <button mat-stroked-button (click)="_cancel()" class="rbtool-datatable-dialog-button">
+          {{ 'features.administration.components.datatableDialog.insert.cancel' | translate }}
+        </button>
+      </div>
+  </div>
+</ng-container>

@@ -1,0 +1,31 @@
+
+
+.rbtool-datatable-dialog-button {
+  min-width: 150px;
+  text-align: center;
+  width: auto;
+}
+
+.mat-dialog-content {
+  min-width: 600px;
+  min-height: 250px;
+}
+
+.rbtool-datatable-delete-dialog-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.rbtool-datatable-delete-dialog-table td:nth-child(1) {
+  width: 40%;
+  height: 40px;
+  line-height: 40px;
+}
+
+.rbtool-datatable-delete-dialog-table tr {
+  border-bottom: 1px solid $rch-grey-1;
+}
+
+.rbtool-datatable-delete-dialog-table tr:last-child {
+  border-bottom: none;
+}

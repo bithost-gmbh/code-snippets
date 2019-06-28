@@ -1,0 +1,10 @@
+# Bank
+type: object
+description: 'Bank information'
+properties:
+  sitzCode:
+    type: string
+    description: 'related bank sitz code'
+  name:
+    type: string
+    description: 'Name of the bank'

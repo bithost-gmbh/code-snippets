@@ -1,0 +1,321 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism.min.css"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-typescript.min.js"></script>
+        <style>
+            body {
+                font-family: 'FrutigerNext', Arial, sans-serif;
+                padding-bottom: 35px;
+            }
+            .form-row {
+                margin-top: 10px;
+                margin-bottom: 10px;
+                display: flex;
+            }
+            .form-row div:first-child {
+                flex-basis: 200px;
+                text-align: right;
+                padding-right: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>PDF Export Service</h1>
+        <p>v1.1.0</p>
+
+        <h2>API</h2>
+
+        <h3>POST /api/svg2pdf</h3>
+
+        <p>Converts multiple svg images to a single pdf file</p>
+
+        <h4>JSON Body</h4>
+        <pre><code class="code-block language-typescript">
+interface body {
+    /** list of svg or html code to be converted to pdf. each item goes to a separate page */
+    svgFiles: string[];
+
+    /** base url for loading assets (e.g. css, fonts, images) with relative urls. Note: CORS must be allowed for the pdf service url, otherwise the assets cannot be loaded. */
+    baseUrl?: string;
+
+    /** orientation of the page. defaults to portrait */
+    orientation?: 'portrait' | 'landscape';
+
+    /** the download filename. defaults to "export.pdf" */
+    filename?: string;
+
+    /** Display header and footer. Defaults to false. */
+    displayHeaderFooter?: boolean;
+
+    /**
+     *   HTML template for the print header.
+     *   Should be valid HTML markup with following classes used to inject printing values into them:
+     *     * date: formatted print date
+     *     * title: document title
+     *     * url: document location
+     *     * pageNumber: current page number
+     *     * totalPages: total pages in the document
+     *   See https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions
+     */
+    headerTemplate?: string;
+
+    /**
+     *  HTML template for the print footer. Should use the same format as the headerTemplate
+     *  See https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions
+     */
+    footerTemplate?: string;
+
+    /**
+     * Paper margins, defaults to none.
+     * See https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions
+     */
+    margin?: {
+        /**  Top margin, accepts values labeled with units. */
+        top?: string;
+
+        /** Right margin, accepts values labeled with units.*/
+        right?: string;
+
+        /** Bottom margin, accepts values labeled with units. */
+        bottom?: string;
+
+        /** Left margin, accepts values labeled with units. */
+        left?: string;
+    };
+
+    /** Whether to return the generated html used for printing the pdf instead of the pdf itself (for debugging purposes). Defaults to false. */
+    returnHTML?: boolean;
+}
+        </code></pre>
+
+        <h4>Minimal Example</h4>
+        <button id="minimal-example-run">Run minimal example</button>
+        <script id="minimal-example-code">
+var sendRequest = function(svgStrings) {
+    // prepare body
+    var body = {
+        svgFiles: svgStrings,
+        filename: 'Export.pdf',
+        orientation: 'landscape',
+        margin: {
+            top: '1cm',
+            right: '1cm',
+            bottom: '1cm',
+            left: '1cm',
+        }
+    };
+
+    // send request
+    var req = new XMLHttpRequest();
+    req.open('POST', '/api/svg2pdf');
+    req.setRequestHeader('Content-Type', 'application/json');
+    req.responseType = 'blob';
+    req.send(JSON.stringify(body));
+
+    // handle response
+    req.onreadystatechange = function() {
+        if (req.readyState === XMLHttpRequest.DONE) {
+            if (req.status === 200) {
+                var downloadFilename = 'Export.pdf';
+                var blob = req.response;
+
+                // create a link to the blob and open it
+                if (navigator.msSaveBlob) {
+                    return navigator.msSaveBlob(blob, downloadFilename);
+                } else {
+                    var a = document.createElement('a');
+                    var url = window.URL.createObjectURL(blob);
+                    a.href = url;
+                    a.download = downloadFilename;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                }
+            } else {
+                console.log('ERROR!');
+            }
+        }
+    };
+};
+
+document.getElementById('minimal-example-run').addEventListener('click', function(){
+    // start the request with a sample svg
+    sendRequest([
+        '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 32 32">' +
+        '  <rect fill="#f00" height="32" width="32"/>' +
+        '  <rect fill="#fff" height="6" width="20" x="6" y="13"/>' +
+        '  <rect fill="#fff" height="20" width="6" x="13" y="6"/>' +
+        '</svg>'
+    ]);
+}, false);
+        </script>
+        <pre><code class="code-block language-typescript" id="minimal-example-code-block">
+
+        </code></pre>
+        <script>
+            document.getElementById('minimal-example-code-block').innerText = document.getElementById('minimal-example-code').innerText;
+        </script>
+
+        <h4>Try it</h4>
+
+        <form id="svg2pdf_tryItForm">
+            <label class="form-row">
+                <div>SVG Files*:</div>
+                <div>
+                    <input type="file" name="svgInput" multiple="true"/>
+                </div>
+            </label>
+            <label class="form-row">
+                <div>Base URL:</div>
+                <div>
+                    <input type="text" name="baseUrl" placeholder="https://something.com/" />
+                </div>
+            </label>
+            <label class="form-row">
+                <div>Orientation:</div>
+                <div>
+                    <select name="orientation">
+                        <option value="portrait">Portrait</option>
+                        <option value="landscape">Landscape</option>
+                    </select>
+                </div>
+            </label>
+            <label class="form-row">
+                <div>Filename:</div>
+                <div>
+                    <input type="text" name="filename" placeholder="mega.pdf" value="mega.pdf"/>
+                </div>
+            </label>
+            <div class="form-row">
+                <div>Display header / footer:</div>
+                <div>
+                    <input type="checkbox" name="displayHeaderFooter" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div>Header Template: </div>
+                <div><textarea name="headerTemplate"></textarea></div>
+            </div>
+            <div class="form-row">
+                <div>Footer Template:</div>
+                <div><textarea name="footerTemplate"></textarea></div>
+            </div>
+            <div class="form-row">
+                <div>Margins:</div>
+                <div><input type="text" name="margins" value="1cm" placeholder="1cm"/></div>
+            </div>
+            <div class="form-row">
+                <div>Return HTML: (for debugging purposes)</div>
+                <div>
+                    <input type="checkbox" name="returnHTML" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div></div>
+                <div><button type="button" name="doit">Do it</button></div>
+            </div>
+            <div class="form-row"><div></div><div class="done"></div></div>
+        </form>
+
+        <script>
+            function initializeSvg2pdfTryItForm() {
+                var form = document.getElementById('svg2pdf_tryItForm');
+                var done = form.querySelector('.done');
+
+                var prepareRequest = function(){
+                    var files = form.elements.svgInput.files;
+                    var numberOfFiles = form.elements.svgInput.files.length;
+                    var remainingFiles = numberOfFiles;
+                    var svgStrings = [];
+
+                    // read all files and send request
+                    for(var i = 0; i < files.length; ++i) {
+                        var reader = new FileReader();
+                        reader.onload = function() {
+                            svgStrings.push(this.result);
+                            --remainingFiles;
+                            if (remainingFiles === 0) {
+                                sendRequest(svgStrings);
+                            }
+                        }.bind(reader);
+                        reader.readAsText(files[i]);
+                    }
+                }
+
+                var sendRequest = function(svgStrings) {
+                    done.innerHTML = '';
+                    done.innerText = 'loading...';
+
+                    var body = {
+                        svgFiles: [],
+                        filename: form.elements.filename.value,
+                        baseUrl: form.elements.baseUrl.value,
+                        orientation: form.elements.orientation.value,
+                    };
+                    if (form.elements.displayHeaderFooter.checked) {
+                        body.displayHeaderFooter = true;
+                    }
+                    if (form.elements.headerTemplate.value) {
+                        body.headerTemplate = form.elements.headerTemplate.value;
+                    }
+                    if (form.elements.footerTemplate.value) {
+                        body.footerTemplate = form.elements.footerTemplate.value;
+                    }
+                    if (form.elements.margins.value) {
+                        body.margin = {
+                            top: form.elements.margins.value,
+                            right: form.elements.margins.value,
+                            bottom: form.elements.margins.value,
+                            left: form.elements.margins.value,
+                        }
+                    }
+                    if (form.elements.returnHTML.checked) {
+                        body.returnHTML = true;
+                    }
+                    for(var i = 0; i < svgStrings.length; ++i) {
+                        body.svgFiles.push(svgStrings[i]);
+                    }
+                    var req = new XMLHttpRequest();
+                    req.open('POST', '/api/svg2pdf');
+                    req.setRequestHeader('Content-Type', 'application/json');
+                    req.responseType = 'blob';
+                    req.send(JSON.stringify(body));
+                    req.onreadystatechange = handleResponse.bind(null, req);
+                };
+
+                var handleResponse = function(req) {
+                    if (req.readyState === XMLHttpRequest.DONE) {
+                        if (req.status === 200) {
+                            done.innerText = 'success';
+
+                            var downloadFilename = 'Export.pdf';
+                            if (form.elements.filename.value) {
+                                downloadFilename = form.elements.filename.value;
+                            }
+                            if (form.elements.returnHTML.checked) {
+                                downloadFilename += '.html';
+                            }
+                            var blob = req.response;
+                            if (navigator.msSaveBlob) {
+                                return navigator.msSaveBlob(blob, downloadFilename);
+                            } else {
+                                var a = document.createElement('a');
+                                var url = window.URL.createObjectURL(blob);
+                                a.href = url;
+                                a.download = downloadFilename;
+                                a.click();
+                                window.URL.revokeObjectURL(url);
+                            }
+                        } else {
+                            done.innerText = 'ERROR!';
+                        }
+                    }
+                };
+
+                form.elements.doit.addEventListener('click', prepareRequest, false);
+            }
+            initializeSvg2pdfTryItForm();
+
+        </script>
+    </body>
+</html>
